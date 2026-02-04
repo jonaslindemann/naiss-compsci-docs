@@ -1,4 +1,4 @@
-# Welcome to the NAISS Development Best Practice (BETA)
+# Welcome to the NAISS Development Best Practice Guides (BETA)
 
 To build the documentation install zensical
 
