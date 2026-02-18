@@ -10,31 +10,107 @@ Guide to creating and managing Python environments for scientific computing on N
 
 ## Why Use Virtual Environments?
 
+If you have used Python for scientific computing you have probarbly encountered a situation where maintaining your Python install gets more difficult the more packages you install. Perhaps a package requires a specific Python version than you have installed. It can also be that you need to document your current setup for reproducibility so that others can recreate the exact setup you used when running your workflow. It is here the Python Virtual Environments can solve many of these problems such as:
+
 - **Isolation**: Project-specific dependencies
 - **Reproducibility**: Pin package versions
 - **Flexibility**: Different Python versions per project
 - **No conflicts**: Avoid system-wide package conflicts
 - **User installation**: No admin rights needed
 
-## Loading Python
+!!! success
+    Whenever starting a new Python-based project consider creating a Python Virtual environment.
+
+## Loading available Python Modules
+
+On NAISS resources all software is provided as modules. A software module sets up the shell environment for using a special software. Read more on this in the NAISS documentation on modules. Python can come in many forms on NAISS systems. Base versions, containing only the standard Python interpreter and associated run time library. Prepackages versions containing common scientific Python libraries such as NumPy, SciPy, Matplotlib, Pandas and an optimised version of MPI for Python. Python can also be provided using a conda distribution such as CondaForge. Please see the documentation for more information on what modules are available on NAISS resources.
 
 ### Available Python Modules
 
+An easy way of querying what Python modules are available can be done by using the ``module avail`` command this will produce a list of available Python modules.
+
 ```bash
-module avail python
-module load python/3.9.5
-python3 --version
+module spider Python
+
+------------------------------------------------------------------------------------
+  Python:
+------------------------------------------------------------------------------------
+    Description:
+      Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+
+     Versions:
+        Python/2.7.18-bare
+        Python/2.7.18
+        Python/3.8.6
+        Python/3.9.5-bare
+        Python/3.9.5
+        Python/3.9.6-bare
+        Python/3.9.6
+        Python/3.10.4-bare
+        Python/3.10.4
+        Python/3.10.8-bare
+        Python/3.10.8
+        Python/3.11.3
+        Python/3.11.5
+        Python/3.12.3
+        Python/3.13.1
+        Python/3.13.5
+```
+
+Then you need to figure out any module dependencies required for the Python module:
+
+```bash
+module spider Python/3.13.5
+```
+
+You will then get a list of required dependencies:
+
+```bash
+------------------------------------------------------------------------------------
+  Python: Python/3.13.5
+------------------------------------------------------------------------------------
+    Description:
+      Python is a programming language that lets you work more quickly and integrate your systems more effectively.
+
+
+    You will need to load all module(s) on any one of the lines below before the "Python/3.13.5" module is available to load.
+
+      GCCcore/14.3.0
+ 
+    This module provides the following extensions:
+
+       flit_core/3.12.0 (E), packaging/25.0 (E), pip/25.1.1 (E), setuptools/80.9.0 (E), setuptools_scm/8.3.
+1 (E), tomli/2.2.1 (E), typing_extensions/4.14.0 (E), wheel/0.45.1 (E)
+```
+
+Now we can load the Python environment:
+
+```bash
+module load GCCcore/14.3.0
+module load Python/3.13.5
+```
+
+The actual Python environment can be queried:
+
+```bash
+$ which python
+/sw/easybuild_milan/software/Python/3.13.5-GCCcore-14.3.0/bin/python
+$ which python3
+/sw/easybuild_milan/software/Python/3.13.5-GCCcore-14.3.0/bin/python3
+$ python -V
+Python 3.13.5
 ```
 
 ### System Python (Avoid)
 
-Don't use system Python (`/usr/bin/python`) - use module-provided Python for:
-- Newer versions
-- Better performance
-- Scientific packages
-- HPC-optimized builds
+Why bother using these complicated modules when we just can use the builtin Python-version (```/usr/bin/python```)? The problem with this approach is that the system provided Python interpreter never gets any new major version only bugfixes. As it doesn't change over the life time of a resource it will be harder and harder to use newer packages or new language features. The system provided scientific packages are often also not highly optimised to be able to be used on a more diverse hardware ecosystem. 
+
+!!! warning
+    Never use the system provided Python interpreter for scientific work.
 
 ## Virtual Environments
+
+A Python environment can be compared to a self-contained python installation with a Python interpreter and a set of installed packages. There are some different ways you can create Python environments depending on what kind of Python distribution you are using. The first way of creating environment 
 
 ### Using venv (Recommended)
 

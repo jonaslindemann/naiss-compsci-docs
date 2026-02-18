@@ -1,7 +1,9 @@
 [project]
-site_name = "NAISS Software Development Best Practices"
+site_name = "Software Development Best Practices"
 site_description = "Best practices for software development on NAISS HPC systems"
 site_author = "Jonas Lindemann et al."
+
+extra_css = ["stylesheets/extra.css"]
 
 copyright = """
 Copyright &copy; 2026 The authors
@@ -9,13 +11,6 @@ Copyright &copy; 2026 The authors
 
 nav = [
   { "Home" = "index.md" },
-  { "Modules" = [
-      { "Overview" = "modules/index.md" },
-      { "Basics" = "modules/basics.md" },
-      { "Best Practices" = "modules/best-practices.md" },
-      { "Common Pitfalls" = "modules/common-pitfalls.md" },
-      { "Cheatsheet" = "modules/cheatsheet.md" },
-  ]},
   { "Compilers" = [
       { "Environments" = "compilers/prgenv.md" },
       { "GCC & LLVM" = "compilers/gcc-llvm.md" },
@@ -25,6 +20,10 @@ nav = [
       { "CMake" = "build-systems/cmake.md" },
       { "Common Errors" = "build-systems/common-errors.md" },
   ]},
+  { "Profiling & Debugging" = [
+      { "Debugging" = "profiling-debugging/debugging.md" },
+      { "Profiling" = "profiling-debugging/profiling.md" },
+  ]},
   { "Python" = [
       { "Environments" = "python/environments.md" },
       { "Performance" = "python/performance.md" },
@@ -32,10 +31,6 @@ nav = [
   ]},
   { "Containers" = [
       { "Apptainer" = "containers/apptainer.md" },
-  ]},
-  { "Profiling & Debugging" = [
-      { "Debugging" = "profiling-debugging/debugging.md" },
-      { "Profiling" = "profiling-debugging/profiling.md" },
   ]},
   { "Portability" = [
       { "NAISS Systems" = "portability/naiss-systems.md" },
@@ -46,6 +41,9 @@ nav = [
 # Section for configuring theme options
 # ----------------------------------------------------------------------------
 [project.theme]
+
+# Use a custom logo from docs/images.
+logo = "images/naiss_logo_white.png"
 
 # Zensical provides a number of feature toggles that change the behavior
 # of the documentation site.
@@ -214,6 +212,16 @@ toggle.name = "Switch to light mode"
 text = "Sora"
 code = "Jetbrains Mono"
 
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
 # ----------------------------------------------------------------------------
 # You can configure your own logo to be shown in the header using the "logo"
 # option in the "icons" subsection. The logo can be a path to a file in your
@@ -223,12 +231,12 @@ code = "Jetbrains Mono"
 # header. Zensical derives the default logo for this from the repository URL.
 # See below...
 #
-# There are other icons you can customize. See the documentation for details.
+## There are other icons you can customize. See the documentation for details.
 #
 # Read more:
 # - https://zensical.org/docs/setup/logo-and-icons
 # - https://zensical.org/docs/authoring/icons-emojis/#search
-# ----------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 #[project.theme.icon]
 #logo = "lucide/smile"
 #repo = "lucide/smile"

@@ -1,0 +1,8 @@
+/* Styling for Array Computing with Eigen course */
+
+/* Adjust header logo size */
+.md-header__button.md-logo img {
+	height: 16px;
+	width: auto;
+}
+

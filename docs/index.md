@@ -11,21 +11,12 @@ These guides are designed to help researchers and developers effectively utilize
 
 ## What You'll Find
 
-- **[Modules](modules/index.md)**: Learn to manage software environments using the module system
 - **[Compilers](compilers/prgenv.md)**: Configure compiler environments and optimize your code
 - **[Build Systems](build-systems/cmake.md)**: Set up and troubleshoot build systems like CMake
+- **[Profiling & Debugging](profiling-debugging/debugging.md)**: Debug and profile your applications
 - **[Python](python/environments.md)**: Create isolated Python environments and optimize performance
 - **[Containers](containers/apptainer.md)**: Use Apptainer for containerized applications
-- **[Profiling & Debugging](profiling-debugging/debugging.md)**: Debug and profile your applications
 - **[Portability](portability/naiss-systems.md)**: Write portable code across NAISS systems
-
-## Getting Started
-
-If you're new to NAISS HPC systems, we recommend starting with:
-
-1. The [Modules Overview](modules/index.md) to understand environment management
-2. The [Compiler Environments](compilers/prgenv.md) guide to set up your development environment
-3. System-specific information in the [Portability section](portability/naiss-systems.md)
 
 ## Contributing
 
