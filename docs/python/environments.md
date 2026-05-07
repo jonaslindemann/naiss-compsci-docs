@@ -83,7 +83,7 @@ You will then get a list of required dependencies:
 1 (E), tomli/2.2.1 (E), typing_extensions/4.14.0 (E), wheel/0.45.1 (E)
 ```
 
-Now we can load the Python environment:
+Now we can load the Python module and its dependencies:
 
 ```bash
 module load GCCcore/14.3.0
@@ -110,32 +110,48 @@ Why bother using these complicated modules when we just can use the builtin Pyth
 
 ## Virtual Environments
 
-A Python environment can be compared to a self-contained python installation with a Python interpreter and a set of installed packages. There are some different ways you can create Python environments depending on what kind of Python distribution you are using. The first way of creating environment 
+A Python environment can be compared to a self-contained python installation with a Python interpreter and a set of installed packages. There are some different ways you can create Python environments depending on what kind of Python distribution you are using. The following sections will cover how to create Python environments using the builtin ``venv`` module and using Conda-Forge if available on the resource.
 
 ### Using venv (Recommended)
 
+``venv`` is a built-in module for creating lightweight Python environments. It is available in Python 3.3 and later and is the preferred way of creating Python environments when not using Conda. It creates an isolated environment with its own Python interpreter and site-packages directory.
+
 #### Create Environment
+
+An environment is created by first loading the selected Python module and then using the ``venv`` module to create a new environment. The following example creates a new environment called ``myenv`` in the current directory.
+
 ```bash
 module load python/3.9.5
 python3 -m venv myenv
 ```
 
 #### Activate
+
+Before using the environment it needs to be activated. Activating an environment is equivalent to setting up all the required paths for both python and associated packages. An environemtn is activated by sourcing the ``activate`` script in the ``bin`` directory of the environment.
+
 ```bash
 source myenv/bin/activate
 ```
 
 #### Install Packages
+
+When the environment is activated you can use pip to install packages into the environment. The following example installs NumPy, SciPy and Matplotlib into the environment.
+
 ```bash
 pip install numpy scipy matplotlib
 ```
 
 #### Deactivate
+
+When you are done working in the environment you can deactivate it to return to the system Python environment. Deactivating an environment is done by running the ``deactivate`` command and is available in the shell after activating the environment.
+
 ```bash
 deactivate
 ```
 
 ### Complete Workflow Example
+
+In this example we load the selected Python module, create a new virtual environment, activate it, install some common scientific packages, verify the installation, run a Python script and then deactivate the environment.
 
 ```bash
 # Load Python module
@@ -165,7 +181,11 @@ deactivate
 
 ## Using Conda (If Available)
 
+Conda is a popular package and environment management system that can be used to create and manage Python environments. It is especially useful for managing complex dependencies and non-Python packages. If Conda is available on the NAISS resource it can be used as an alternative to venv for creating Python environments. 
+
 ### Loading Conda
+
+Before using Conda you need to load the Conda module if it is available on the resource. You can check if Conda is available by using the ``module avail`` command. If it is available you can load it using the ``module load`` command.
 
 ```bash
 module avail conda
@@ -174,9 +194,11 @@ module load conda/4.12.0
 
 ### Creating Conda Environment
 
+Creating a Conda environment is similar to using venv but with some additional features. You can specify the Python version and also include non-Python dependencies if needed. The following example creates a new Conda environment called ``myenv`` with Python 3.12 and installs some common scientific packages.
+
 ```bash
 # Create with specific Python version
-conda create -n myenv python=3.9
+conda create -n myenv python=3.12
 
 # Activate
 conda activate myenv
@@ -202,30 +224,37 @@ conda deactivate
 
 ## Requirements Files
 
+In many cases you will want to document the packages and versions you have installed in your environment. This is important for reproducibility and for sharing your environment with others. A common way to do this is by using a ``requirements.txt`` file which lists all the packages and their versions.
+
 ### Creating requirements.txt
+
+Using pip you can easily create a ``requirements.txt`` file that captures all the installed packages in your environment. This is done using the ``pip freeze`` command which outputs a list of installed packages and their versions.
 
 ```bash
 # Save current environment
 pip freeze > requirements.txt
 ```
 
-### Installing from requirements.txt
+A typical ``requirements.txt`` file will look like this:
 
-```bash
-pip install -r requirements.txt
-```
-
-### Example requirements.txt
-
-```
-numpy==1.21.0
+```numpy==1.21.0
 scipy==1.7.0
 pandas==1.3.0
 matplotlib==3.4.2
 scikit-learn==0.24.2
 ```
 
+### Installing from requirements.txt
+
+Installing from a ``requirements.txt`` file is straightforward using pip. This will install all the packages listed in the file with the specified versions.
+
+```bash
+pip install -r requirements.txt
+```
+
 ### Pinning vs. Ranges
+
+When specifying package versions in a requirements file you can choose to pin exact versions, specify minimum versions, compatible versions or version ranges. The choice depends on your need for reproducibility and flexibility. It can be a good practice to pin exact versions for production environments to ensure reproducibility, while using version ranges during development to allow for updates. Pinning too hard can lead to issues when packages are updated and no longer compatible, while being too flexible can lead to unexpected breakages. Here are some examples of different version specifications:
 
 ```
 # Exact version (recommended for reproducibility)
@@ -243,7 +272,11 @@ numpy>=1.20.0,<1.22.0
 
 ## Job Script Integration
 
+When running Python scripts on NAISS HPC systems you will typically submit a job script to the scheduler (e.g., SLURM). It is important to ensure that your Python environment is properly set up in the job script so that your Python code can run with the correct dependencies. Below are examples of how to integrate Python environment setup into a SLURM job script.
+
 ### Example SLURM Script
+
+In this example we load the required Python module, activate a virtual environment, run a Python script and then deactivate the environment. Deactivation is optional as the job will end anyway, but it can be good practice to clean up the environment.
 
 ```bash
 #!/bin/bash
@@ -253,7 +286,7 @@ numpy>=1.20.0,<1.22.0
 #SBATCH --ntasks-per-node=1
 
 # Load Python module
-module load python/3.9.5
+module load python/3.12.3
 
 # Activate virtual environment
 source /path/to/myenv/bin/activate
@@ -266,6 +299,8 @@ deactivate
 ```
 
 ### Portable Job Script
+
+To make your job script more portable across different NAISS resources you can include checks for the required modules and create the virtual environment if it doesn't exist. This way you can run the same script on different resources without needing to manually set up the environment each time.
 
 ```bash
 #!/bin/bash
@@ -288,39 +323,6 @@ fi
 
 # Run application
 python train_model.py
-```
-
-## Installing Scientific Packages
-
-### NumPy, SciPy, Matplotlib
-
-```bash
-pip install numpy scipy matplotlib
-```
-
-### Machine Learning
-
-```bash
-# Scikit-learn
-pip install scikit-learn
-
-# TensorFlow (CPU)
-pip install tensorflow
-
-# PyTorch (CPU)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-```
-
-### HPC-Specific Packages
-
-```bash
-# MPI for Python
-module load openmpi/4.1.1
-pip install mpi4py
-
-# HDF5
-module load hdf5/1.12.1
-pip install h5py
 ```
 
 ## Jupyter Notebooks
@@ -596,4 +598,3 @@ pip install package_name
 
 - [Performance](performance.md) - Python performance optimization
 - [MPI Python](mpi-python.md) - Parallel Python with MPI
-- [Modules](../modules/index.md) - Module system basics

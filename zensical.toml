@@ -1,6 +1,6 @@
 [project]
-site_name = "Software Development Best Practices"
-site_description = "Best practices for software development on NAISS HPC systems"
+site_name = "Python Best Practice Guide"
+site_description = "Best practices for Python development in HPC environments"
 site_author = "Jonas Lindemann et al."
 
 extra_css = ["stylesheets/extra.css"]
@@ -11,30 +11,10 @@ Copyright &copy; 2026 The authors
 
 nav = [
   { "Home" = "index.md" },
-  { "Compilers" = [
-      { "Environments" = "compilers/prgenv.md" },
-      { "GCC & LLVM" = "compilers/gcc-llvm.md" },
-      { "Optimization" = "compilers/optimization.md" },
-  ]},
-  { "Build Systems" = [
-      { "CMake" = "build-systems/cmake.md" },
-      { "Common Errors" = "build-systems/common-errors.md" },
-  ]},
-  { "Profiling & Debugging" = [
-      { "Debugging" = "profiling-debugging/debugging.md" },
-      { "Profiling" = "profiling-debugging/profiling.md" },
-  ]},
-  { "Python" = [
-      { "Environments" = "python/environments.md" },
-      { "Performance" = "python/performance.md" },
-      { "MPI" = "python/mpi-python.md" },
-  ]},
-  { "Containers" = [
-      { "Apptainer" = "containers/apptainer.md" },
-  ]},
-  { "Portability" = [
-      { "NAISS Systems" = "portability/naiss-systems.md" },
-  ]},
+  { "Overview" = "python/index.md" },
+  { "Environments" = "python/environments.md" },
+  { "Performance" = "python/performance.md" },
+  { "MPI" = "python/mpi-python.md" },
 ]
 
 # ----------------------------------------------------------------------------

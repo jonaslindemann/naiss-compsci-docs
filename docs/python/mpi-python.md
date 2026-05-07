@@ -565,4 +565,3 @@ if rank == 0:
 
 - [Environments](environments.md) - Python virtual environments
 - [Performance](performance.md) - Python optimization
-- [Profiling](../profiling-debugging/profiling.md) - Performance analysis

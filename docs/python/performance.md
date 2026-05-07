@@ -560,4 +560,3 @@ def numpy_distance_matrix(points):
 
 - [Environments](environments.md) - Setting up Python
 - [MPI Python](mpi-python.md) - Distributed parallelism
-- [Profiling](../profiling-debugging/profiling.md) - System-level profiling

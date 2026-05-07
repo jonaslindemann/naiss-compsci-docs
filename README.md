@@ -1,14 +1,19 @@
-# Welcome to the NAISS Development Best Practice Guides (BETA)
+# Python Best Practice Guide
 
-To build the documentation install zensical
+To build the documentation, install Zensical:
 
-  pip install zensical
+```bash
+pip install zensical
+```
 
-The build the documentatio with
+Build the documentation with:
 
-  zensical build
+```bash
+zensical build
+```
 
-or serve it as a web page with:
+Or serve it locally with:
 
-  zensical serve
-  
+```bash
+zensical serve
+```
