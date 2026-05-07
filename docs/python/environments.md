@@ -327,13 +327,23 @@ python train_model.py
 
 ## Jupyter Notebooks
 
+Jupyter notebooks is an important tool in scientific research. However, running Jupyter notebooks on HPC systems can be tricky due to the need for an interactive session and the fact that HPC systems are typically accessed remotely. Below are some tips for running Jupyter notebooks on NAISS systems.
+
 ### Installing Jupyter
+
+To be able to run Jupyter notebooks you need to have Jupyter installed in your Python environment. This can be done using pip or conda depending on how you created your environment. The following example shows how to install Jupyter using pip in a virtual environment.
 
 ```bash
 pip install jupyter ipykernel
 ```
 
+```bash
+conda install jupyter ipykernel
+```
+
 ### Register Kernel
+
+If you want to be able to select your virtual environment as a kernel in Jupyter notebooks you need to register it using the following command:
 
 ```bash
 python -m ipykernel install --user --name=myenv --display-name="Python (myenv)"
@@ -341,22 +351,37 @@ python -m ipykernel install --user --name=myenv --display-name="Python (myenv)"
 
 ### Launch Jupyter (Interactive)
 
+A notebook instance is launched by running the following command in an interactive session. This will start a Jupyter server on the compute node and print out a URL with a token that you can use to access the notebook from your local machine.
+
 ```bash
 jupyter notebook --no-browser --port=8888
 ```
 
-Then create SSH tunnel from local machine:
+Then create SSH tunnel from your local machine:
+
 ```bash
 ssh -L 8888:localhost:8888 username@naiss-system.se
 ```
 
 Access at `http://localhost:8888`
 
+### Launch Jupyter Lab (Interactive)
+
+```bash
+jupyter lab --no-browser --port=8888
+```
+
+Then create SSH tunnel from your local machine:
+
+```bash
+ssh -L 8888:localhost:8888 username@naiss-system.se
+```
+
 ## Package Installation Issues
 
 ### Compiler Required
 
-Some packages need compilation:
+Some Python packages require compilation and thus need a compatible compiler to be loaded. If you encounter build errors during pip installation it may be because the required compiler is not available in your environment.
 
 ```bash
 # Load compiler first
@@ -366,7 +391,11 @@ module load gcc/11.2.0
 pip install package_name
 ```
 
+If you are using a Python module that has a specific compiler dependency make sure to load the required compiler module before loading the Python module.
+
 ### Binary Wheel Not Available
+
+Some packages may not have pre-built binary wheels available for your platform or Python version, which can lead to build failures during installation. In such cases, you can try forcing pip to build from source or using an older version of pip that may have access to older binary wheels.
 
 ```bash
 # Force build from source
@@ -378,6 +407,8 @@ pip install package_name --prefer-binary
 
 ### Permission Denied
 
+If you use module that provides a Python environment and try to install packages using pip you may encounter permission errors because the module environment is read-only. In this case you should create a virtual environment and install packages there instead of trying to install them in the module environment.
+
 ```bash
 # Use user installation (within venv not usually needed)
 pip install --user package_name
@@ -387,6 +418,8 @@ which python  # Should show venv path
 ```
 
 ## Environment Management Best Practices
+
+Environments are the key to managing Python dependencies effectively. Here are some best practices for creating and maintaining Python environments on NAISS systems.
 
 ### 1. One Environment Per Project
 
@@ -402,14 +435,35 @@ project_b/
   └── src/
 ```
 
+Conda environments are often created in a central location and activated per project:
+
+```bash
+conda create -n project-a-env python=3.9
+conda create -n project-b-env python=3.10
+conda activate project_a
+```
+
+It can be an idea to give your environments descriptive names that reflect the project they are associated with. This makes it easier to manage multiple environments and avoid confusion. For conda modules it can also be a good idea to suffix the name with ``-env`` to avoid clashes with module names.
+
 ### 2. Document Dependencies
 
-Always maintain `requirements.txt`:
+If you are working with other people or want to ensure reproducibility it is important to document the dependencies of your project. This can be done using a ``requirements.txt`` file for pip environments or an ``environment.yml`` file for conda environments. These files should be kept up to date whenever you add or update packages in your environment.
+
+For pip environments, use `requirements.txt`:
+
 ```bash
 pip freeze > requirements.txt
 ```
 
+For conda environments, use `environment.yml`:
+
+```bash
+conda env export > environment.yml
+```
+
 ### 3. Use Specific Versions
+
+If you rely on specific versions of packages it is important to specify those versions in your requirements file. This ensures that you can recreate the exact environment later and that others can do the same. Avoid using unpinned dependencies as they can lead to breakages when new versions are released.
 
 ```
 # Good - reproducible
@@ -420,6 +474,8 @@ numpy
 ```
 
 ### 4. Separate Dev Dependencies
+
+It can be a good idea to separate production dependencies from development dependencies. This can be done by having two requirements files, one for production and one for development. The production file should only include the packages needed to run the application, while the development file can include additional tools for testing, linting and formatting.
 
 ```
 # requirements.txt (production)
@@ -439,9 +495,14 @@ pip install -r requirements.txt -r requirements-dev.txt
 
 ## Shared Environments
 
+On many HPC systems there are system-wide Python modules available that include common scientific packages optimised for the system. These can be a good option for users who want to quickly get started without needing to set up their own environment. However, they may not have the latest versions of packages and may not include all the packages you need. It is important to weigh the pros and cons of using system-wide modules versus creating your own virtual environment.
+
 ### System-Wide Modules
 
+These modules are provided by the system administrators and are available to all users. They often include common scientific packages that are optimised for the HPC system. However, they may not have the latest versions of packages and may not include all the packages you need.
+
 Some packages are available as modules:
+
 ```bash
 module avail python-
 module load python-numpy/1.21.0
@@ -474,19 +535,41 @@ module load python-scipy/1.7.0
 
 ## Disk Space Considerations
 
+Python environments can take up a lot of disk space, especially if you have many packages installed or if you are using conda environments which can include non-Python dependencies. It is important to be mindful of disk space when creating and managing Python environments on NAISS systems. Here are some tips for managing disk space:
+
+### Remove Unused Environments
+
+If you have environments that you are no longer using it is a good idea to remove them to free up disk space. For venv environments you can simply delete the environment directory. For conda environments you can use the following command to remove an environment:
+
+```bash
+conda env remove -n myenv
+```
+
 ### Check Environment Size
+
+Check the size of your environment to see how much disk space it is using. This can help you identify if you have any large packages installed that you may not need. Use the following command to check the size of your virtual environment:
 
 ```bash
 du -sh venv/
 ```
 
+For conda environments, use:
+
+```bash
+du -sh /path/to/conda/envs/myenv/
+```
+
 ### Clean Pip Cache
+
+Pip caches downloaded packages which can take up a lot of disk space over time. You can clear the pip cache to free up space using the following command:
 
 ```bash
 pip cache purge
 ```
 
 ### Use --no-cache-dir
+
+When installing packages in a containerized environment or when disk space is a concern, you can use the `--no-cache-dir` option with pip to prevent caching of downloaded packages. This can help reduce disk usage but may lead to longer installation times if you need to reinstall packages.
 
 ```bash
 pip install --no-cache-dir package_name
@@ -495,6 +578,7 @@ pip install --no-cache-dir package_name
 ### Share Environments (Advanced)
 
 For team projects, consider one shared environment:
+
 ```bash
 # Create in project directory
 python3 -m venv /proj/myproject/venv
@@ -503,9 +587,12 @@ python3 -m venv /proj/myproject/venv
 source /proj/myproject/venv/bin/activate
 ```
 
-**Warning:** Coordinate to avoid conflicts.
+!!! warning
+    Be cautious when sharing environments to avoid conflicts and ensure proper permissions.
 
 ## Conda Environment Files
+
+Conda environments can be exported to a YAML file which captures the exact state of the environment including all packages and their versions. This is useful for sharing environments with others or for recreating the environment on a different system. The following sections cover how to export and create conda environments using environment files.
 
 ### Export Environment
 
@@ -537,7 +624,11 @@ dependencies:
 
 ## Troubleshooting
 
+This section provides common troubleshooting tips for issues related to Python environments on NAISS systems.
+
 ### Wrong Python Version
+
+Many times users may accidentally use the system Python instead of their virtual environment. This can lead to issues with missing packages or incompatible versions. To check which Python interpreter you are using, you can use the following commands:
 
 ```bash
 # Check Python location
@@ -549,6 +640,8 @@ which python3
 ```
 
 ### Packages Not Found After Install
+
+Sometimes after installing a package you may find that it is not available when you try to import it in Python. This can happen if the package was installed in a different environment or if there was an issue during installation. To troubleshoot this, you can check the location of pip and ensure that you are installing packages in the correct environment.
 
 ```bash
 # Ensure venv is activated
@@ -563,6 +656,8 @@ pip install package_name
 
 ### Module Import Errors
 
+If you encounter import errors when trying to use a package in Python it may be because the package was not installed correctly or because there is a conflict with another package. To troubleshoot this, you can check the list of installed packages and their versions, check the Python path to ensure that the correct environment is being used and try reinstalling the package.
+
 ```bash
 # Check installed packages
 pip list
@@ -576,6 +671,8 @@ pip install package_name
 ```
 
 ### Build Failures
+
+Some packages require compilation and may fail to install if the required compiler is not available. If you encounter build errors during pip installation it may be because the required compiler is not loaded in your environment. To fix this, you can load the required compiler module before installing the package.
 
 ```bash
 # Load required modules
